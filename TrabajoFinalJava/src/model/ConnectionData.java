@@ -82,7 +82,13 @@ public class ConnectionData {
 
 	private void addSql() {
 
-		sql.add("SHOW TABLES"); // 0
-		sql.add("SELECT * FROM "); // 1
+		sql.add("SHOW TABLES");  														// 0
+		sql.add("SELECT * FROM ");  													// 1
+		sql.add("SELECT v.nombre, v.apellido, COUNT(p.pagado) AS no_pagado "
+				+ "FROM pagos p JOIN vecinos v ON p.id_vecino = v.id "
+				+ "WHERE pagado = 0 GROUP BY id_vecino;");   							// 2
+		sql.add("UPDATE recibos r JOIN pagos p ON r.codigo_recibo = p.codigo_recibo"
+				+ " SET r.importe_base = r.importe_base * 1.10 WHERE pagado = 1"
+				+ " AND DATEDIFF(p.fecha_pago, r.fecha_limite_pago) >= 2");  			// 3
 	}
 }

@@ -32,6 +32,7 @@ public class Data {
 	private void addTexts() {
 
 		texts.add("Guardar"); // 0
+		texts.add("no_pagados"); // 1
 	}
 
 	private void addNumbers() {

@@ -190,6 +190,7 @@ public class MainWindow extends JFrame {
 		// Añadimos la tabla al panel central y este panel al panelGroup
 		panelCenter.add(scrollPane);
 		panelGroup.add(panelCenter, BorderLayout.NORTH);
+		add(panels.get(1));
 
 		// Refrescamos la ventana
 		this.revalidate();
@@ -222,7 +223,7 @@ public class MainWindow extends JFrame {
 		// Añadimos al panel sur el botón de guardado creado en el método a parte
 		panelSouth.add(save);
 		panelGroup.add(panelSouth, BorderLayout.CENTER);
-		add(panels.get(1));
+		
 
 		// Refrescamos la ventana
 		this.revalidate();

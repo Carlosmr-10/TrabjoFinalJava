@@ -30,6 +30,7 @@ public class MainController {
 		window = new MainWindow(data);
 		comboEvent = new ListenerCombo(this);
 
+		createStatements();
 		fillCombo();
 		createTable();
 		createTextFields();
@@ -44,8 +45,6 @@ public class MainController {
 
 	private void fillCombo() throws SQLException {
 
-		createStatements(); // El primero se usará para mostrar todas las tablas 
-		createStatements(); // Y el segundo se usará para mostrar todos los datos de una tabla
 		createResultSet(0, 0);
 
 		while (connectionDB.getResultSets(0).next()) {
@@ -53,6 +52,8 @@ public class MainController {
 			window.getComboTablas().addItem(
 					connectionDB.getResultSets(0).getString(1));
 		}
+
+		window.getComboTablas().addItem(data.getTexts().get(1));
 	}
 
 	public void createTable() throws SQLException {
@@ -62,9 +63,23 @@ public class MainController {
 
 		if (selectedTable != null) {
 
-			// Creamos un resultSet para ejecutar la consulta
-			ResultSet rs = connectionDB.getStatements(1).executeQuery(
+			// Creamos un resultSet para ejecutar las consultas
+			ResultSet rs;
+			
+			/* Se ejecutará la consulta "SHOW TABLES" a no ser 
+			 * que seleccionemos la opción "no_pagado" en el comboBox
+			 * que se ejecutará una consulta diferente
+			 */ 
+			if (selectedTable != data.getTexts().get(1)) {
+				
+				rs = connectionDB.getStatements(1).executeQuery(
 					connectionData.getSql().get(1) + selectedTable);
+			}
+			else {
+
+				rs = connectionDB.getStatements(2).executeQuery(
+						connectionData.getSql().get(2));
+			}
 
 			// Cogemos los datos que se hayan guardado en el resultSet
 			ResultSetMetaData metaData = rs.getMetaData();
@@ -97,7 +112,10 @@ public class MainController {
 				window.getTableDB().addRow(row);
 			}
 		}
-		createTextFields();
+		if (selectedTable != data.getTexts().get(1) && selectedTable != null) {
+
+			createTextFields();
+		}
 	}
 
 	// Creación de los labels y textFields de la vista para llamarlo posteriormente
@@ -109,7 +127,11 @@ public class MainController {
 	// Método para crear los Statements
 	private void createStatements() throws SQLException {
 
-		connectionDB.setStatements();
+		// Aqui se creara un statement por consulta sql que haya en la clase ConnectionData
+		for (int i = 0; i < connectionData.getSql().size(); i++) {
+
+			connectionDB.setStatements();
+		}
 	}
 
 	/*
