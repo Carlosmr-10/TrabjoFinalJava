@@ -17,11 +17,14 @@ public class ConnectionClass {
 	private ArrayList<Statement> statements = new ArrayList<>();
 	private ArrayList<ResultSet> resultSets = new ArrayList<>();
 
-	public ConnectionClass() throws ClassNotFoundException {
+	public ConnectionClass() throws ClassNotFoundException, SQLException {
 
 		connectionData = new ConnectionData();
 		
 		Class.forName(connectionData.getMysql());
+		
+		connectionDB = DriverManager.getConnection(connectionData.getIp(),
+				connectionData.getUser(), connectionData.getPassword());
 	}
 
 	public Connection getConnectionDB() {

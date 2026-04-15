@@ -20,7 +20,7 @@ public class ConnectionData {
 
 		user = "root";
 		password = "";
-		dataBase = "zona_fit_db";
+		dataBase = "comunidad";
 		ip = "jdbc:mysql://localhost/" + dataBase + "?serverTimezone=UTC";
 		mysql = "com.mysql.cj.jdbc.Driver";
 		addSql();
