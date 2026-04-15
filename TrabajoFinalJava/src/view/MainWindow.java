@@ -14,9 +14,9 @@ import model.Data;
 public class MainWindow extends JFrame {
 
 	private JButton save;
-	private ArrayList<JTextField> textFields = new ArrayList<JTextField>();
-	private ArrayList<JLabel> labels = new ArrayList<JLabel>();
-	private ArrayList<JPanel> panels = new ArrayList<JPanel>();
+	private ArrayList<JTextField> textFields = new ArrayList<>();
+	private ArrayList<JLabel> labels = new ArrayList<>();
+	private ArrayList<JPanel> panels = new ArrayList<>();
 	private JPanel panelGroup;
 	private JComboBox<String> comboTablas;
 	private DefaultTableModel tableDB;

@@ -17,12 +17,12 @@ public class ListenerCombo implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
-//		try {
-//
-//			controller.createTable();
-//		}
-//		catch (SQLException e1) {
-//			e1.printStackTrace();
-//		}
+		try {
+
+			controller.createTable();
+		}
+		catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 }

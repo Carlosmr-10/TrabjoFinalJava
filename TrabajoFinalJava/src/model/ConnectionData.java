@@ -82,7 +82,7 @@ public class ConnectionData {
 
 	private void addSql() {
 
-		sql.add("SHOW TABLES "); // 0
+		sql.add("SHOW TABLES"); // 0
 		sql.add("SELECT * FROM "); // 1
 	}
 }
