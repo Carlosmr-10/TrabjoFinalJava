@@ -50,6 +50,22 @@ public class MainController {
 		window.getTable().getModel().addTableModelListener(tableEvent);
 	}
 
+	/*
+	 * Método para crear los ResultSets recibiendo el statement y 
+	 * el numero de para seleccionar la consulta que habremos introducido 
+	 * previamente en un ArrayList
+	 */
+	private void createResultSet(int nS, int nsql) throws SQLException {
+
+		connectionDB.setResultSets(nS, nsql);
+	}
+
+//	// Método para crear los ResultSets recibiendo el statement y la consulta sql
+//	private void createResultSet(int nS, String sql) throws SQLException {
+//
+//		connectionDB.setResultSets(nS, sql);
+//	}
+
 	private void fillCombo() throws SQLException {
 
 		// Creacion del resultSet para mostrar todas las tablas de la base de datos
@@ -230,20 +246,4 @@ public class MainController {
 //			ps.executeUpdate();
 //		}
 //	}
-
-	/*
-	 * Método para crear los ResultSets recibiendo el statement y 
-	 * el numero de para seleccionar la consulta que habremos introducido 
-	 * previamente en un ArrayList
-	 */
-	private void createResultSet(int nS, int nsql) throws SQLException {
-
-		connectionDB.setResultSets(nS, nsql);
-	}
-
-	// Método para crear los ResultSets recibiendo el statement y la consulta sql
-	private void createResultSet(int nS, String sql) throws SQLException {
-
-		connectionDB.setResultSets(nS, sql);
-	}
 }
