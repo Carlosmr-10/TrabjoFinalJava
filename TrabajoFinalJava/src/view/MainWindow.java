@@ -24,6 +24,7 @@ public class MainWindow extends JFrame {
 
 	public MainWindow(Data data) {
 
+		// Definimos las propiedades de nuestra ventana
 		setLayout(new BorderLayout());
 		setLocationRelativeTo(null);
 		setSize(500, 350);
