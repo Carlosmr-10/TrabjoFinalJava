@@ -32,7 +32,9 @@ public class Data {
 	private void addTexts() {
 
 		texts.add("Guardar"); // 0
-		texts.add("no_pagados"); // 1
+		texts.add("Sin filtro"); // 1
+		texts.add("Pagados"); // 2
+		texts.add("No pagados"); // 3
 	}
 
 	private void addNumbers() {

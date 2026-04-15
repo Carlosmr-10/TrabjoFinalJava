@@ -18,7 +18,9 @@ public class MainWindow extends JFrame {
 	private ArrayList<JLabel> labels = new ArrayList<>();
 	private ArrayList<JPanel> panels = new ArrayList<>();
 	private JPanel panelGroup;
-	private JComboBox<String> comboTablas;
+	private JComboBox<String> comboTables;
+	private ArrayList<JRadioButton> radioButtons = new ArrayList<>();
+	private JCheckBox check;
 	private DefaultTableModel tableDB;
 	private JTable table;
 
@@ -30,7 +32,7 @@ public class MainWindow extends JFrame {
 		setSize(500, 350);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-		createPanelNorth();
+		createPanelNorth(data);
 		createSaveButton(data);
 
 		setVisible(true);
@@ -79,12 +81,28 @@ public class MainWindow extends JFrame {
 		this.panelGroup = panelGroup;
 	}
 
-	public JComboBox<String> getComboTablas() {
-		return comboTablas;
+	public JComboBox<String> getComboTables() {
+		return comboTables;
 	}
 
-	public void setComboTablas(JComboBox<String> comboTablas) {
-		this.comboTablas = comboTablas;
+	public void setComboTables(JComboBox<String> comboTables) {
+		this.comboTables = comboTables;
+	}
+
+	public ArrayList<JRadioButton> getRadioButtons() {
+		return radioButtons;
+	}
+
+	public void setRadioButtons(ArrayList<JRadioButton> radioButtons) {
+		this.radioButtons = radioButtons;
+	}
+
+	public JCheckBox getCheck() {
+		return check;
+	}
+
+	public void setCheck(JCheckBox check) {
+		this.check = check;
 	}
 
 	public DefaultTableModel getTableDB() {
@@ -116,13 +134,34 @@ public class MainWindow extends JFrame {
 	}
 
 	// Creación de la parte norte de la vista
-	public void createPanelNorth() {
+	public void createPanelNorth(Data data) {
 
 		JPanel panelNorth = new JPanel(new FlowLayout());
-		comboTablas = new JComboBox<String>();
-		panelNorth.add(comboTablas);
+		comboTables = new JComboBox<String>();
+		panelNorth.add(comboTables);
 		panels.add(panelNorth);
+		createRadioButtons(data);
 		add(panels.get(0), BorderLayout.NORTH);
+	}
+
+	private void createRadioButtons(Data data) {
+
+		ButtonGroup bg = new ButtonGroup();
+
+		for (int i = 0; i < 3; i++) {
+
+			JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
+
+			JRadioButton jrb = new JRadioButton();
+			bg.add(jrb);
+			radioButtons.add(jrb);
+			buttonPanel.add(jrb);
+
+			JLabel label = new JLabel(data.getTexts().get(i + 1));
+			buttonPanel.add(label);
+
+			panels.get(0).add(buttonPanel);
+		}
 	}
 
 	// Creación del panel central que recibe el número de columnas y un ArrayList con los nombres de las columnas

@@ -20,6 +20,8 @@ public class MainController {
 	private ConnectionClass connectionDB;
 	private MainWindow window;
 	private ListenerCombo comboEvent;
+	private ListenerButton buttonEvent;
+	private ListenerTable tableEvent;
 	private ArrayList<String> columnsNames = new ArrayList<>();
 
 	public MainController() throws ClassNotFoundException, SQLException {
@@ -28,45 +30,51 @@ public class MainController {
 		connectionData = new ConnectionData();
 		connectionDB = new ConnectionClass();
 		window = new MainWindow(data);
-		comboEvent = new ListenerCombo(this);
 
 		createStatements();
 		fillCombo();
 		createTable();
 		createTextFields();
-		starEvents();
+		startEvents();
 	}
 
-	private void starEvents() throws ClassNotFoundException, SQLException {
+	private void startEvents() throws ClassNotFoundException, SQLException {
 
 		comboEvent = new ListenerCombo(this);
-		window.getComboTablas().addActionListener(comboEvent);
+		window.getComboTables().addActionListener(comboEvent);
+
+		buttonEvent = new ListenerButton(this, window);
+		window.getSave().addActionListener(buttonEvent);
+	
+		tableEvent = new ListenerTable(this, window);
+		window.getTable().getModel().addTableModelListener(tableEvent);
 	}
 
 	private void fillCombo() throws SQLException {
 
+		// Creacion del resultSet para mostrar todas las tablas de la base de datos
 		createResultSet(0, 0);
 
 		while (connectionDB.getResultSets(0).next()) {
 
-			window.getComboTablas().addItem(
+			window.getComboTables().addItem(
 					connectionDB.getResultSets(0).getString(1));
 		}
 
-		window.getComboTablas().addItem(data.getTexts().get(1));
+		window.getComboTables().addItem(data.getTexts().get(1));
 	}
 
 	public void createTable() throws SQLException {
 
-		// Seleccionamos la tabla qu queremos mostrar
-		String selectedTable = (String) window.getComboTablas().getSelectedItem();
+		// Seleccionamos la tabla que queremos mostrar
+		String selectedTable = (String) window.getComboTables().getSelectedItem();
 
 		if (selectedTable != null) {
 
 			// Creamos un resultSet para ejecutar las consultas
 			ResultSet rs;
 			
-			/* Se ejecutará la consulta "SHOW TABLES" a no ser 
+			/* Se ejecutará la consulta "SELECT * FROM (selectedTable)" a no ser 
 			 * que seleccionemos la opción "no_pagado" en el comboBox
 			 * que se ejecutará una consulta diferente
 			 */ 
@@ -112,6 +120,8 @@ public class MainController {
 				window.getTableDB().addRow(row);
 			}
 		}
+		// Solo se muestran los textFields y etiquetas en el caso de que 
+		// se haya seleccionado una tabla de la base de datos
 		if (selectedTable != data.getTexts().get(1) && selectedTable != null) {
 
 			createTextFields();
@@ -133,6 +143,93 @@ public class MainController {
 			connectionDB.setStatements();
 		}
 	}
+
+	// Método para insertar los datos que recibe el nombre de la tabla
+	// y los datos que se van a insertar en ella
+	public void insertData(String tableName, ArrayList<String> data) throws SQLException {
+
+		// Creamos el inicio del insert
+		String sql = connectionData.insertData(tableName);
+		int size = data.size();
+
+		/* Usamos un bucle for para añadir la cantidad exacta de "?" como datos
+		 * se van a añadir, que mas tarde se sustituirá por los datos
+		 * por los datos que introduzcamos en los textFields
+		 */
+		for (int i = 0; i < size; i++) {
+
+			if (i == size - 1) {
+
+				sql += "?)";
+			}
+			else {
+
+				sql += "?, ";
+			}
+		}
+
+		// Llamada al método para generar el prepared statement
+		generatePreparedStatement(sql, size, data);
+	}
+
+	// Método que genera el prepared statement del insert
+	private void generatePreparedStatement(String sql, int size, ArrayList<String> data) throws SQLException {
+
+		try (PreparedStatement ps = connectionDB.getConnectionDB().prepareStatement(sql)) {
+
+			for (int i = 0; i < size; i++) {
+
+				ps.setString(i + 1, data.get(i));
+			}
+
+			ps.executeUpdate();
+		}
+	}
+
+	// Médoto que activa la opción de aumentar el importe un 10%
+	public void updateData() throws SQLException {
+
+		String sql = connectionData.getSql().get(4);
+
+		try (PreparedStatement ps = connectionDB.getConnectionDB().prepareStatement(sql)) {
+
+			ps.executeUpdate();
+		}
+	}
+
+//	public void updateData(String tableName, String columnName, String idColumn,
+//			String newText, int idValue) throws SQLException {
+//
+//		String sql = connectionData.updateData(tableName, columnName, idColumn);
+//
+//		try (PreparedStatement ps = connectionDB.getConnectionDB().prepareStatement(sql)) {
+//
+//			ps.setString(1, newText);
+//			ps.setString(2, idValue);
+//
+//			ps.executeUpdate();
+//		}
+//	}
+
+//	public void updateData(String tableName, String columnName, String idColumn, String idColumn2,
+//			boolean newText, ArrayList<Integer> values) throws SQLException {
+//
+//		String sql = "UPDATE " + tableName + " SET " + columnName
+//				+ " = ? WHERE " + idColumn + " = ? AND " + idColumn2 + " = ?";
+//
+//		System.out.println(sql);
+//		try (PreparedStatement ps = connectionDB.getConnectionDB().prepareStatement(sql)) {
+//
+//			ps.setBoolean(1, newText);
+//
+//			for (int i = 0; i < values.size(); i++) {
+//				
+//				ps.setInt(i + 2, values.get(i));
+//			}
+//			System.out.println(ps);
+//			ps.executeUpdate();
+//		}
+//	}
 
 	/*
 	 * Método para crear los ResultSets recibiendo el statement y 
