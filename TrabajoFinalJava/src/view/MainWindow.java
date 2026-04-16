@@ -144,11 +144,13 @@ public class MainWindow extends JFrame {
 		add(panels.get(0), BorderLayout.NORTH);
 	}
 
+	// Creación de los RadioButton y el checkBox
 	private void createRadioButtons(Data data) {
 
+		// ButtonGroup para agrupar los radioButton
 		ButtonGroup bg = new ButtonGroup();
 
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < data.getNumbers().get(0); i++) {
 
 			JPanel buttonPanel = new JPanel(new GridLayout(0, 1));
 
@@ -161,6 +163,19 @@ public class MainWindow extends JFrame {
 			buttonPanel.add(label);
 
 			panels.get(0).add(buttonPanel);
+
+			// Si el indice es igual al tamaño recibido en datos - 1 creamos el check
+			// ya que se quedará en la ultima posición
+			if (i == data.getNumbers().get(0) - 1) {
+
+				JPanel checkPanel = new JPanel(new GridLayout(0, 1));
+				check = new JCheckBox();
+				checkPanel.add(check);
+				JLabel checkLabel = new JLabel(data.getTexts().get(5));
+				checkPanel.add(checkLabel);
+				panels.get(0).add(checkPanel);
+			}
+			
 		}
 	}
 

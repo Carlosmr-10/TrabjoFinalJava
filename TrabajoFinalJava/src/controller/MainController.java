@@ -21,7 +21,7 @@ public class MainController {
 	private MainWindow window;
 	private ListenerCombo comboEvent;
 	private ListenerButton buttonEvent;
-	private ListenerTable tableEvent;
+//	private ListenerTable tableEvent;
 	private ArrayList<String> columnsNames = new ArrayList<>();
 
 	public MainController() throws ClassNotFoundException, SQLException {
@@ -30,24 +30,30 @@ public class MainController {
 		connectionData = new ConnectionData();
 		connectionDB = new ConnectionClass();
 		window = new MainWindow(data);
+		comboEvent = new ListenerCombo(this);
+		buttonEvent = new ListenerButton(this, window);
 
 		createStatements();
 		fillCombo();
-		createTable();
-		createTextFields();
 		startEvents();
 	}
 
+	// Añadir listeners a las variables
 	private void startEvents() throws ClassNotFoundException, SQLException {
 
-		comboEvent = new ListenerCombo(this);
 		window.getComboTables().addActionListener(comboEvent);
 
-		buttonEvent = new ListenerButton(this, window);
 		window.getSave().addActionListener(buttonEvent);
+		
+		for (int i = 0; i < window.getRadioButtons().size(); i++) {
+
+			window.getRadioButtons().get(i).addActionListener(buttonEvent);
+		}
+
+		window.getCheck().addActionListener(buttonEvent);
 	
-		tableEvent = new ListenerTable(this, window);
-		window.getTable().getModel().addTableModelListener(tableEvent);
+//		tableEvent = new ListenerTable(this, window);
+//		window.getTable().getModel().addTableModelListener(tableEvent);
 	}
 
 	/*
@@ -66,7 +72,10 @@ public class MainController {
 //		connectionDB.setResultSets(nS, sql);
 //	}
 
+	// Rellenar los datos del comboBox
 	private void fillCombo() throws SQLException {
+
+		window.getComboTables().addItem(data.getTexts().get(4));
 
 		// Creacion del resultSet para mostrar todas las tablas de la base de datos
 		createResultSet(0, 0);
@@ -76,71 +85,73 @@ public class MainController {
 			window.getComboTables().addItem(
 					connectionDB.getResultSets(0).getString(1));
 		}
-
-		window.getComboTables().addItem(data.getTexts().get(1));
 	}
 
-	public void createTable() throws SQLException {
+	// Opcion del RadioButton para no aplicar ningun tipo de filtro
+	public void noFilter() throws SQLException {
 
 		// Seleccionamos la tabla que queremos mostrar
 		String selectedTable = (String) window.getComboTables().getSelectedItem();
 
-		if (selectedTable != null) {
+		if (selectedTable != data.getTexts().get(4)) {
 
 			// Creamos un resultSet para ejecutar las consultas
-			ResultSet rs;
-			
-			/* Se ejecutará la consulta "SELECT * FROM (selectedTable)" a no ser 
-			 * que seleccionemos la opción "no_pagado" en el comboBox
-			 * que se ejecutará una consulta diferente
-			 */ 
-			if (selectedTable != data.getTexts().get(1)) {
-				
-				rs = connectionDB.getStatements(1).executeQuery(
+			ResultSet rs = connectionDB.getStatements(1).executeQuery(
 					connectionData.getSql().get(1) + selectedTable);
-			}
-			else {
-
-				rs = connectionDB.getStatements(2).executeQuery(
-						connectionData.getSql().get(2));
-			}
-
-			// Cogemos los datos que se hayan guardado en el resultSet
-			ResultSetMetaData metaData = rs.getMetaData();
-			// Contamos las columnas y las guardamos en una variable
-			int numberOfColumns = metaData.getColumnCount();
 			
-			// Limpiamos el arraylist para asegurarnos de que no interfiera al cambiar de tabla
-			columnsNames.clear();
-
-			// Creamos un bucle for para añadir los nombres de las columnas al arraylist que los contiene
-			for (int i = 1; i <= numberOfColumns; i++) {
-
-				columnsNames.add(metaData.getColumnName(i));
-			}
-
-			// Llamada al metodo para crear la tabla
-			window.createPanelCenter(numberOfColumns, columnsNames);
-
-			// Comprobamos con un while que haya más filas en la tabla
-			while (rs.next()) {
-
-				// Creamos un array de tipo objeto que almacenará los datos que hay por fila
-				Object[] row = new Object [numberOfColumns];
-
-				// Bucle for para rellenar la tabla
-				for (int i = 0; i < numberOfColumns; i++) {
-
-					row[i] = rs.getObject(i + 1);
-				}
-				window.getTableDB().addRow(row);
-			}
-		}
-		// Solo se muestran los textFields y etiquetas en el caso de que 
-		// se haya seleccionado una tabla de la base de datos
-		if (selectedTable != data.getTexts().get(1) && selectedTable != null) {
-
+			createTable(rs);
 			createTextFields();
+		}
+	}
+
+	// Seleccionamos el filtro para aquellos recibos que estan pagados
+	public void notPaidFilter() throws SQLException {
+
+		ResultSet rs = connectionDB.getStatements(2).executeQuery(
+				connectionData.getSql().get(2));
+		
+		createTable(rs);
+	}
+
+	// Seleccionamos el filtro para aquellos recibos que estan pagados
+	public void paidFilter() throws SQLException {
+
+		ResultSet rs = connectionDB.getStatements(3).executeQuery(
+				connectionData.getSql().get(3));
+		
+		createTable(rs);
+	}
+
+	private void createTable(ResultSet rs) throws SQLException {
+		// Cogemos los datos que se hayan guardado en el resultSet
+		ResultSetMetaData metaData = rs.getMetaData();
+		// Contamos las columnas y las guardamos en una variable
+		int numberOfColumns = metaData.getColumnCount();
+		
+		// Limpiamos el arraylist para asegurarnos de que no interfiera al cambiar de tabla
+		columnsNames.clear();
+
+		// Creamos un bucle for para añadir los nombres de las columnas al arraylist que los contiene
+		for (int i = 1; i <= numberOfColumns; i++) {
+
+			columnsNames.add(metaData.getColumnName(i));
+		}
+
+		// Llamada al metodo para crear la tabla
+		window.createPanelCenter(numberOfColumns, columnsNames);
+
+		// Comprobamos con un while que haya más filas en la tabla
+		while (rs.next()) {
+
+			// Creamos un array de tipo objeto que almacenará los datos que hay por fila
+			Object[] row = new Object [numberOfColumns];
+
+			// Bucle for para rellenar la tabla
+			for (int i = 0; i < numberOfColumns; i++) {
+
+				row[i] = rs.getObject(i + 1);
+			}
+			window.getTableDB().addRow(row);
 		}
 	}
 

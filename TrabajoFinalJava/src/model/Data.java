@@ -1,3 +1,8 @@
+/*
+ * Autor Carlos Michelena Rueda
+ * Fecha: 09/11/2025
+ */
+
 package model;
 
 import java.util.ArrayList;
@@ -35,10 +40,12 @@ public class Data {
 		texts.add("Sin filtro"); // 1
 		texts.add("Pagados"); // 2
 		texts.add("No pagados"); // 3
+		texts.add("-- Seleccionar --"); // 4
+		texts.add("Añadir impuestos"); // 5
 	}
 
 	private void addNumbers() {
 
-		numbers.add(0); // 0
+		numbers.add(3); // 0
 	}
 }
