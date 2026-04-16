@@ -18,6 +18,10 @@ public class ConnectionData {
 
 	public ConnectionData() {
 
+//		user = "sanjose";
+//		password = "SQL_2710_jsp";
+//		dataBase = "i1i17";
+//		ip = "jdbc:mysql://192.168.33.214/" + dataBase + "?serverTimezone=UTC";
 		user = "root";
 		password = "";
 		dataBase = "comunidad";
